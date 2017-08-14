@@ -1,5 +1,8 @@
 import React, { Component } from 'react'
+import { Switch, Route } from 'react-router-dom'
 import ClubList from '../components/ClubList'
+import Club from '../components/Club'
+
 
 class ClubContainer extends Component {
 
@@ -15,9 +18,10 @@ class ClubContainer extends Component {
 
   render() {
     return(
-      <div>
-        <ClubList clubs={this.state.clubs}/>
-      </div>
+      <Switch>
+        <Route exact path='/clubs' render={() => <ClubList clubs={this.state.clubs}/>} />
+        <Route path='/clubs/:id' component={Club} />
+      </Switch>
     )
   }
 

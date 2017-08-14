@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
 import { Button, Menu } from 'semantic-ui-react'
+import { Link } from 'react-router-dom'
 
 class Nav extends Component {
-  state = { activeItem: 'home' }
+  state = { activeItem: [] }
 
-  handleItemClick = (e, { name }) => this.setState({ activeItem: name })
+  handleItemClick = (e, { name }) => this.setState({})
 
   render() {
     const { activeItem } = this.state
@@ -12,9 +13,9 @@ class Nav extends Component {
     return (
       <div>
         <Menu pointing secondary>
-          <Menu.Item name='home' active={activeItem === 'home'} onClick={this.handleItemClick} />
-          <Menu.Item name='clubs' active={activeItem === 'messages'} onClick={this.handleItemClick} />
-          <Menu.Item name='players' active={activeItem === 'friends'} onClick={this.handleItemClick} />
+          <Menu.Item name='home' active={activeItem === 'home'} onClick={this.handleItemClick}><Link to='/'>Home</Link></Menu.Item>
+          <Menu.Item name='clubs' active={activeItem === 'clubs'} onClick={this.handleItemClick}><Link to='/clubs'>Clubs</Link></Menu.Item>
+          <Menu.Item name='players' active={activeItem === 'players'} onClick={this.handleItemClick}><Link to='/players'>Players</Link></Menu.Item>
           <Menu.Menu position='right'>
             <Menu.Item name='logout' active={activeItem === 'logout'} onClick={this.handleItemClick}>
               <Button>Log Out</Button>
