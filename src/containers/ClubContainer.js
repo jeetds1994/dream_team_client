@@ -13,7 +13,7 @@ class ClubContainer extends Component {
   }
 
   componentDidMount(){
-    fetch(`${BASE_URL}/clubs?page=1`)
+    fetch(`${BASE_URL}/clubs`)
     .then(res => res.json())
     .then(clubs => this.setState({clubs}))
   }
