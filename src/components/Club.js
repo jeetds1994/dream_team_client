@@ -51,7 +51,9 @@ class Club extends Component {
     this.setState({
       lineup: new_lineup,
       bench: new_bench,
-      effectiveness_score: this.effectiveness_score(new_lineup)
+      effectiveness_score: this.effectiveness_score(new_lineup),
+      firstSelection: {},
+      secondSelection: {}
     })
   }
 
