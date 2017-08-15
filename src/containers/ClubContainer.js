@@ -4,6 +4,8 @@ import ClubList from '../components/ClubList'
 import Club from '../components/Club'
 
 
+const BASE_URL = process.env.REACT_APP_API
+
 class ClubContainer extends Component {
 
   state = {
@@ -11,7 +13,7 @@ class ClubContainer extends Component {
   }
 
   componentDidMount(){
-    fetch('http://localhost:3000/api/v1/clubs?page=1')
+    fetch(`${BASE_URL}/clubs?page=1`)
     .then(res => res.json())
     .then(clubs => this.setState({clubs}))
   }

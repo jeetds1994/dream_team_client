@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Image, Button } from 'semantic-ui-react'
 
-
+const BASE_URL = process.env.REACT_APP_API
 
 class Club extends Component {
   state = {
@@ -15,7 +15,7 @@ class Club extends Component {
 
   componentDidMount() {
   const clubID = this.props.match.params.id
-  fetch(`http://localhost:3000/api/v1/clubs/${clubID}`)
+  fetch(`${BASE_URL}/clubs/${clubID}`)
   .then(resp => resp.json())
   .then(json => {
     this.setState({
@@ -67,7 +67,7 @@ class Club extends Component {
       <div>
         <Image width='50' src={this.state.currentClub.badge} avatar />
         {this.state.currentClub.name}<br/>
-        Current Gucci Clout: {this.state.effectiveness_score}
+        Current Gucci Clout: {this.state.effectiveness_score} Gucci Belts
         <br/><br/>
 
         Starting Lineup:
