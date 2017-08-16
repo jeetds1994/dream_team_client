@@ -67,10 +67,12 @@ class Club extends Component {
 
     return(
       <div>
-        <Image width='50' src={this.state.currentClub.badge} avatar />
-        {this.state.currentClub.name}<br/>
-        Current Gucci Clout: {this.state.effectiveness_score} Gucci Belts
-        <br/><br/>
+        <h3>
+          <Image width='50' src={this.state.currentClub.badge} avatar />
+          {this.state.currentClub.name}
+        </h3>
+
+        <h4>Current Clout: {this.state.effectiveness_score} Gucci Belts</h4>
 
         Starting Lineup:
         <ul>
