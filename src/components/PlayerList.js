@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
 import Player from './Player'
-import { Grid } from 'semantic-ui-react'
+import { Grid, Menu } from 'semantic-ui-react'
 import { Route, Link } from 'react-router-dom'
 
 
 class PlayerList extends Component {
 
   render() {
+    const { activeItem } = this.props
+
     return (
       <div>
       <Route exact path='/players/:id' component={Player} />
@@ -23,6 +25,15 @@ class PlayerList extends Component {
               )
             })}
           </Grid.Row>
+          <Menu pagination>
+            <Menu.Item name='1' active={activeItem === '1'} onClick={this.props.handlePageNumClick} />
+            <Menu.Item name='2' active={activeItem === '2'} onClick={this.props.handlePageNumClick} />
+            <Menu.Item name='3' active={activeItem === '3'} onClick={this.props.handlePageNumClick} />
+            <Menu.Item name='4' active={activeItem === '4'} onClick={this.props.handlePageNumClick} />
+            <Menu.Item name='5' active={activeItem === '5'} onClick={this.props.handlePageNumClick} />
+            <Menu.Item name='6' active={activeItem === '6'} onClick={this.props.handlePageNumClick} />
+            <Menu.Item name='7' active={activeItem === '7'} onClick={this.props.handlePageNumClick} />
+          </Menu>
         </Grid>
       </div>
     )
