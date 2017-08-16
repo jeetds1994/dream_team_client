@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button, Menu } from 'semantic-ui-react'
+import { Button, Menu, Input } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 
 class Nav extends Component {
@@ -17,6 +17,9 @@ class Nav extends Component {
           <Menu.Item name='clubs' active={activeItem === 'clubs'} onClick={this.handleItemClick}><Link to='/clubs'>Clubs</Link></Menu.Item>
           <Menu.Item name='players' active={activeItem === 'players'} onClick={this.handleItemClick}><Link to='/players'>Players</Link></Menu.Item>
           <Menu.Menu position='right'>
+            <Menu.Item>
+              <Input icon='search' placeholder='Search clubs or players...' />
+            </Menu.Item>
             <Menu.Item name='logout' active={activeItem === 'logout'} onClick={this.handleItemClick}>
               <Button>Log Out</Button>
             </Menu.Item>
@@ -27,4 +30,13 @@ class Nav extends Component {
   }
 }
 
+// <Menu.Menu position='right'>
+// <div className='ui right aligned category search item'>
+// <div className='ui transparent icon input'>
+// <input className='prompt' type='text' placeholder='Search clubs, squads, or players...' />
+// <i className='search link icon' />
+// </div>
+// <div className='results' />
+// </div>
+// </Menu.Menu>
 export default Nav

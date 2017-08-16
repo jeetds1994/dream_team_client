@@ -7,6 +7,7 @@ import { Route, Link } from 'react-router-dom'
 class ClubList extends Component {
 
   render() {
+
     return (
       <div>
       <Route exact path='/clubs/:id' component={Club} />
@@ -30,6 +31,7 @@ class ClubList extends Component {
   }
 
 }
+
 
 export default ClubList
 
