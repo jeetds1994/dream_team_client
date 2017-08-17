@@ -43,7 +43,7 @@ class ClubContainer extends Component {
 
     return(
       <div>
-        {this.state.loading ? loader : null}
+      {this.state.loading ? loader : null}
         <Switch>
           <Route exact path='/clubs' render={() => <ClubList clubs={this.state.clubs} handlePageNumClick={this.handlePageNumClick} activeItem={this.state.activeItem} />} />
           <Route path='/clubs/:id' component={Club} />
