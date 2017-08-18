@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Image, Button } from 'semantic-ui-react'
+import { Image, Button, Dropdown } from 'semantic-ui-react'
 
 const BASE_URL = process.env.REACT_APP_API
 
@@ -9,8 +9,8 @@ class Club extends Component {
     starters: [],
     bench: [],
     effectiveness_score: '',
-    starterSelection: {},
-    benchSelection: {},
+    firstSelection: {},
+    secondSelection: {},
     formation: '4-5-1',
     goalies: [],
     defenders: [],
@@ -40,8 +40,6 @@ class Club extends Component {
 
     this.setState({
       currentClub: json,
-      // starters: json.players.slice(0, 11),
-      // bench: json.players.slice(11),
       starters: starters,
       bench: bench,
       goalies: goalies,
@@ -54,34 +52,121 @@ class Club extends Component {
   }
 
   handlePlayerClick = event => {
-    // debugger
-    let index = parseInt(event.target.id, 10)
-    if (this.state.starters.map(player => player.id === event.target.value).includes(true)) {
-      this.setState({starterSelection: this.state.starters.slice(index, index + 1)[0]})
+    // let index = this.state.currentClub.players.indexOf(event.target.value)
+    let player = this.state.currentClub.players.filter(player => player.id === event.target.value)[0]
+
+    // This is to de-select a player
+    if (this.state.firstSelection.id === event.target.value) {
+      this.setState({firstSelection: {}})
+      return console.log("firstSelection should be empty")
+    }
+
+    // This is to de-select a player
+    if (this.state.secondSelection.id === event.target.value) {
+      this.setState({secondSelection: {}})
+      return console.log("secondSelection should be empty")
+    }
+
+    // This method was used to differentiate between starterSelection and benchSelection
+    // if (this.state.starters.map(player => player.id === event.target.value).includes(true)) {
+    //   this.setState({firstSelection: this.state.starters.slice(index, index + 1)[0]})
+    // } else {
+    //   this.setState({secondSelection: this.state.bench.slice(index, index + 1)[0]})
+    // }
+
+    if (Object.keys(this.state.firstSelection).length === 0) {
+      this.setState({firstSelection: player})
     } else {
-      this.setState({benchSelection: this.state.bench.slice(index, index + 1)[0]})
+      this.setState({secondSelection: player})
     }
   }
 
   handleChangePlayers = event => {
     event.preventDefault()
-    const i1 = this.state.starters.indexOf(this.state.starterSelection)
-    const i2 = this.state.bench.indexOf(this.state.benchSelection)
 
+    // Ensuring two players have been selected for switch
+    if (Object.keys(this.state.firstSelection).length === 0 || Object.keys(this.state.secondSelection).length === 0) {
+      return console.log("Both selections must be made before changing lineup")
+    }
+
+    // Initiating variables needed for splicing used to swap player positions
+    let i1
+    let i2
     let new_starters = this.state.starters
     let new_bench = this.state.bench
 
-    new_starters.splice(i1, 1, this.state.benchSelection)
-    new_bench.splice(i2, 1, this.state.starterSelection)
+    // Switch statement for switching the exact places of each player
+    switch (this.state.starters.map(player => player.id === this.state.firstSelection.id).includes(true)) {
+      case true:
+        i1 = this.state.starters.indexOf(this.state.firstSelection)
+
+        if (this.state.starters.map(player => player.id === this.state.secondSelection.id).includes(true)) {
+          i2 = this.state.starters.indexOf(this.state.secondSelection)
+
+          // Both players are starters
+          new_starters.splice(i1, 1, this.state.secondSelection)
+          new_starters.splice(i2, 1, this.state.firstSelection)
+
+        } else {
+          i2 = this.state.bench.indexOf(this.state.secondSelection)
+
+          // 1st player is a starter and 2nd player is on the bench
+          new_starters.splice(i1, 1, this.state.secondSelection)
+          new_bench.splice(i2, 1, this.state.firstSelection)
+        }
+
+        break
+      case false:
+        i1 = this.state.bench.indexOf(this.state.firstSelection)
+
+        if (this.state.starters.map(player => player.id === this.state.secondSelection.id).includes(true)) {
+          i2 = this.state.starters.indexOf(this.state.secondSelection)
+
+          // 1st player is on the bench and 2nd player is a starter
+          new_bench.splice(i1, 1, this.state.secondSelection)
+          new_starters.splice(i2, 1, this.state.firstSelection)
+
+        } else {
+          i2 = this.state.bench.indexOf(this.state.secondSelection)
+
+          // Both players are on the bench
+          new_bench.splice(i1, 1, this.state.secondSelection)
+          new_bench.splice(i2, 1, this.state.firstSelection)
+        }
+
+        break
+      default:
+        console.log("Your switch statement for switching the exact places of each player isn't working")
+        break
+    }
 
     this.setState({
       starters: new_starters,
       bench: new_bench,
       effectiveness_score: this.effectiveness_score(new_starters),
-      starterSelection: {},
-      benchSelection: {}
+      firstSelection: {},
+      secondSelection: {}
     })
   }
+
+    handleFormationChange = event => {
+      let form_def_num = event.target.innerText.split('-')[0]
+      let form_mid_num = event.target.innerText.split('-')[1]
+      let form_for_num = event.target.innerText.split('-')[2]
+      let starters = [].concat(this.state.goalies.slice(0, 1), this.state.defenders.slice(0, form_def_num), this.state.midfielders.slice(0, form_mid_num), this.state.forwards.slice(0, form_for_num))
+      let bench = []
+      this.state.currentClub.players.map(player => {
+        if (!starters.includes(player)) {
+          bench.push(player)
+        }})
+
+      this.setState({
+        formation: event.target.innerText,
+        starters: starters,
+        bench: bench,
+        effectiveness_score: this.effectiveness_score(starters)
+      })
+    }
 
   effectiveness_score = (players) => {
     let total = 0
@@ -89,13 +174,15 @@ class Club extends Component {
     return (total/11).toFixed(1)
   }
 
-  // get_formation_numbers = () => {
-  //   let form_def_num = this.state.formation.split('-')[0]
-  //   let form_mid_num = this.state.formation.split('-')[1]
-  //   let form_for_num = this.state.formation.split('-')[2]
-  // }
-
   render() {
+
+    const formationOptions = [
+      {key: '3-4-3', value: '3-4-3', text: '3-4-3'},
+      {key: '3-5-2', value: '3-5-2', text: '3-5-2'},
+      {key: '4-3-3', value: '4-3-3', text: '4-3-3'},
+      {key: '4-4-2', value: '4-4-2', text: '4-4-2'},
+      {key: '4-5-1', value: '4-5-1', text: '4-5-1'}
+    ]
 
     return(
       <div>
@@ -106,7 +193,8 @@ class Club extends Component {
 
         <h4>Current Clout: {this.state.effectiveness_score} Gucci Belts</h4>
 
-        Current Formation: {this.state.formation}
+        Team Formation: <Dropdown value={this.state.formation} search selection options={formationOptions} onChange={this.handleFormationChange}/>
+        <br/>
         <br/>
         Starting Lineup:
         <ul>
@@ -114,9 +202,9 @@ class Club extends Component {
         </ul>
 
         <br/>
-        Starter: {this.state.starterSelection.name ? this.state.starterSelection.name : null}
+        Player 1: {this.state.firstSelection.name ? this.state.firstSelection.name : null}
         <br/>
-        Substitute: {this.state.benchSelection.name ? this.state.benchSelection.name : null}
+        Player 2: {this.state.secondSelection.name ? this.state.secondSelection.name : null}
         <br/>
         <Button onClick={this.handleChangePlayers}>Change Lineup!</Button>
         <br/>
