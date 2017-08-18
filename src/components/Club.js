@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Image, Button, Dropdown } from 'semantic-ui-react'
+import { Image, Button, Dropdown, Input } from 'semantic-ui-react'
 
 const BASE_URL = process.env.REACT_APP_API
 
@@ -11,7 +11,10 @@ class Club extends Component {
     effectiveness_score: '',
     firstSelection: {},
     secondSelection: {},
-    formation: '4-5-1',
+    formation: {"format": '4-5-1'},
+    formationOptions: [],
+    savedFormations: [],
+    setFormationDefault: false,
     goalies: [],
     defenders: [],
     midfielders: [],
@@ -24,14 +27,12 @@ class Club extends Component {
   .then(resp => resp.json())
   .then(json => {
 
-    let form_def_num = this.state.formation.split('-')[0]
-    let form_mid_num = this.state.formation.split('-')[1]
-    let form_for_num = this.state.formation.split('-')[2]
     let goalies = json.players.filter(player => player.club_position === 'GK')
     let defenders = json.players.filter(player => player.club_position.includes('B'))
     let midfielders = json.players.filter(player => player.club_position.includes('M') || player.club_position === 'RW' || player.club_position === 'LW')
     let forwards = json.players.filter(player => player.club_position.includes('F') || player.club_position === 'ST' || player.club_position === 'RW' || player.club_position === 'LW')
-    let starters = [].concat(goalies.slice(0, 1), defenders.slice(0, form_def_num), midfielders.slice(0, form_mid_num), forwards.slice(0, form_for_num))
+    let starters = [].concat(goalies.slice(0, 1), defenders.slice(0, this.state.formation.format.split('-')[0]), midfielders.slice(0, this.state.formation.format.split('-')[1]), forwards.slice(0, this.state.formation.format.split('-')[2]))
+    // let starters = [].concat(this.state.goalies.slice(0, this.state.formation.goalkeepers), this.state.defenders.slice(0, this.state.formation.defenders), this.state.midfielders.slice(0, this.state.formation.midfielders), this.state.forwards.slice(0, this.state.formation.forwards))
     let bench = []
     json.players.map(player => {
       if (!starters.includes(player)) {
@@ -46,8 +47,33 @@ class Club extends Component {
       defenders: defenders,
       midfielders: midfielders,
       forwards: forwards,
-      effectiveness_score: this.effectiveness_score(json.players)
+      effectiveness_score: this.effectiveness_score(starters)
       })
+    })
+
+    fetch(`${BASE_URL}/formations`)
+    .then(res => res.json())
+    .then(formationOptions => {
+      // let starters = [].concat(this.state.goalies.slice(0, this.state.formation.goalkeepers), this.state.defenders.slice(0, this.state.formation.defenders), this.state.midfielders.slice(0, this.state.formation.midfielders), this.state.forwards.slice(0, this.state.formation.forwards))
+      // let bench = []
+      // this.state.currentClub.players.map(player => {
+      //   if (!starters.includes(player)) {
+      //     bench.push(player)
+      //   }})
+
+      this.setState({
+        formationOptions,
+        // formation: formationOptions[0],
+        // starters: starters,
+        // bench: bench,
+        // effectiveness_score: this.effectiveness_score(starters)
+      })})
+
+      fetch(`${BASE_URL}/club_formations`)
+      .then(res => res.json())
+      .then(club_formations => {
+        let savedFormations = club_formations.filter(formation => formation.club.id === parseInt(clubID, 10))
+        this.setState({savedFormations})
     })
   }
 
@@ -67,13 +93,7 @@ class Club extends Component {
       return console.log("secondSelection should be empty")
     }
 
-    // This method was used to differentiate between starterSelection and benchSelection
-    // if (this.state.starters.map(player => player.id === event.target.value).includes(true)) {
-    //   this.setState({firstSelection: this.state.starters.slice(index, index + 1)[0]})
-    // } else {
-    //   this.setState({secondSelection: this.state.bench.slice(index, index + 1)[0]})
-    // }
-
+    // This puts first player selected into firstSelection if one does not exist yet; otherwise, player goes into secondSelection
     if (Object.keys(this.state.firstSelection).length === 0) {
       this.setState({firstSelection: player})
     } else {
@@ -150,10 +170,8 @@ class Club extends Component {
   }
 
     handleFormationChange = event => {
-      let form_def_num = event.target.innerText.split('-')[0]
-      let form_mid_num = event.target.innerText.split('-')[1]
-      let form_for_num = event.target.innerText.split('-')[2]
-      let starters = [].concat(this.state.goalies.slice(0, 1), this.state.defenders.slice(0, form_def_num), this.state.midfielders.slice(0, form_mid_num), this.state.forwards.slice(0, form_for_num))
+      let new_formation = this.state.formationOptions.filter(formation => formation.format === event.target.innerText)[0]
+      let starters = [].concat(this.state.goalies.slice(0, new_formation.goalkeepers), this.state.defenders.slice(0, new_formation.defenders), this.state.midfielders.slice(0, new_formation.midfielders), this.state.forwards.slice(0, new_formation.forwards))
       let bench = []
       this.state.currentClub.players.map(player => {
         if (!starters.includes(player)) {
@@ -161,11 +179,87 @@ class Club extends Component {
         }})
 
       this.setState({
-        formation: event.target.innerText,
+        formation: new_formation,
         starters: starters,
         bench: bench,
         effectiveness_score: this.effectiveness_score(starters)
       })
+    }
+
+    handleSavedFormationChange = event => {
+      let savedFormation = this.state.savedFormations.filter(club_formation => club_formation.formation.format === event.target.innerText)[0]
+      let new_formation = savedFormation.formation
+
+      let goalies
+      let defenders
+      let midfielders
+      let forwards
+
+      if (new_formation.format === "3-4-3") {
+        goalies = this.state.currentClub.players.filter(player => player.id === savedFormation.player_1)
+        defenders = this.state.currentClub.players.filter(player => player.id === savedFormation.player_2 || player.id === savedFormation.player_3 || player.id === savedFormation.player_4)
+        midfielders = this.state.currentClub.players.filter(player => player.id === savedFormation.player_5 || player.id === savedFormation.player_6 || player.id === savedFormation.player_7 || player.id === savedFormation.player_8)
+        forwards = this.state.currentClub.players.filter(player => player.id === savedFormation.player_9 || player.id === savedFormation.player_10 || player.id === savedFormation.player_11)
+      }
+
+      if (new_formation.format === "4-5-1") {
+        goalies = this.state.currentClub.players.filter(player => player.id === savedFormation.player_1)
+        defenders = this.state.currentClub.players.filter(player => player.id === savedFormation.player_2 || player.id === savedFormation.player_3 || player.id === savedFormation.player_4 || player.id === savedFormation.player_5)
+        midfielders = this.state.currentClub.players.filter(player => player.id === savedFormation.player_6 || player.id === savedFormation.player_7 || player.id === savedFormation.player_8 || player.id === savedFormation.player_9 || player.id === savedFormation.player_10)
+        forwards = this.state.currentClub.players.filter(player => player.id === savedFormation.player_11)
+      }
+
+      let starters = [].concat(goalies.slice(0, new_formation.goalkeepers), defenders.slice(0, new_formation.defenders), midfielders.slice(0, new_formation.midfielders), forwards.slice(0, new_formation.forwards))
+      let bench = []
+      this.state.currentClub.players.map(player => {
+        if (!starters.includes(player)) {
+          bench.push(player)
+        }})
+
+      this.setState({
+        formation: new_formation,
+        starters: starters,
+        bench: bench,
+        effectiveness_score: this.effectiveness_score(starters)
+      })
+    }
+
+    handleSetFormationDefault = event => {
+      this.setState({setFormationDefault: event.target.checked})
+    }
+
+    handleSaveLineup = event => {
+      fetch(`${BASE_URL}/club_formations`,
+            {
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            method: "POST",
+            body: JSON.stringify({
+              'club_id': this.state.currentClub.id,
+              'formation_id': this.state.formation.id,
+              "current_club_formation": true,
+              "default_club_formation": this.state.setFormationDefault,
+              "player_1": this.state.starters[0].id,
+              "player_2": this.state.starters[1].id,
+              "player_3": this.state.starters[2].id,
+              "player_4": this.state.starters[3].id,
+              "player_5": this.state.starters[4].id,
+              "player_6": this.state.starters[5].id,
+              "player_7": this.state.starters[6].id,
+              "player_8": this.state.starters[7].id,
+              "player_9": this.state.starters[8].id,
+              "player_10": this.state.starters[9].id,
+              "player_11": this.state.starters[10].id,
+            })
+          })
+      .then(resp => resp.json())
+      .then(resp => {
+        console.log(resp)
+        this.setState({
+        setFormationDefault: false
+      })})
     }
 
   effectiveness_score = (players) => {
@@ -175,14 +269,10 @@ class Club extends Component {
   }
 
   render() {
-
-    const formationOptions = [
-      {key: '3-4-3', value: '3-4-3', text: '3-4-3'},
-      {key: '3-5-2', value: '3-5-2', text: '3-5-2'},
-      {key: '4-3-3', value: '4-3-3', text: '4-3-3'},
-      {key: '4-4-2', value: '4-4-2', text: '4-4-2'},
-      {key: '4-5-1', value: '4-5-1', text: '4-5-1'}
-    ]
+    // Semantic dropdown requires these three fields to properly display and select options
+    const formationOptions = this.state.formationOptions.map(formation => ({key: formation.format, value: formation.format, text: formation.format}))
+    const savedFormations = this.state.savedFormations.map(club_formation => ({key: club_formation.formation.format, value: club_formation.formation.format, text: club_formation.formation.format}))
+    // debugger
 
     return(
       <div>
@@ -193,7 +283,9 @@ class Club extends Component {
 
         <h4>Current Clout: {this.state.effectiveness_score} Gucci Belts</h4>
 
-        Team Formation: <Dropdown value={this.state.formation} search selection options={formationOptions} onChange={this.handleFormationChange}/>
+        Team Formation: <Dropdown value={this.state.formation.format} search selection options={formationOptions} onChange={this.handleFormationChange}/>
+        <br/>
+        Saved Formations: <Dropdown search selection options={savedFormations} onChange={this.handleSavedFormationChange}/>
         <br/>
         <br/>
         Starting Lineup:
@@ -207,6 +299,11 @@ class Club extends Component {
         Player 2: {this.state.secondSelection.name ? this.state.secondSelection.name : null}
         <br/>
         <Button onClick={this.handleChangePlayers}>Change Lineup!</Button>
+        <br/>
+        <br/>
+        <Button onClick={this.handleSaveLineup}>Submit Lineup!</Button>
+        <br/>
+        Set as Default? <Input type="checkbox" onClick={this.handleSetFormationDefault} value={this.state.setFormationDefault} />
         <br/>
         <br/>
 
