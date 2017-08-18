@@ -18,7 +18,7 @@ class Nav extends Component {
           <Menu.Item name='players' active={activeItem === 'players'} onClick={this.handleItemClick}><Link to='/players'>Players</Link></Menu.Item>
           <Menu.Menu position='right'>
             <Menu.Item>
-              <Input icon='search' placeholder='Search clubs or players...' />
+              <Input icon='search' placeholder='Search...' />
             </Menu.Item>
             <Menu.Item name='logout' active={activeItem === 'logout'} onClick={this.handleItemClick}>
               <Button>Log Out</Button>
@@ -30,13 +30,4 @@ class Nav extends Component {
   }
 }
 
-// <Menu.Menu position='right'>
-// <div className='ui right aligned category search item'>
-// <div className='ui transparent icon input'>
-// <input className='prompt' type='text' placeholder='Search clubs, squads, or players...' />
-// <i className='search link icon' />
-// </div>
-// <div className='results' />
-// </div>
-// </Menu.Menu>
 export default Nav

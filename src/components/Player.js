@@ -23,7 +23,7 @@ class Player extends Component {
 
     const player = this.state.currentPlayer
 
-    // Remove club object, id, and name from player attributes
+    // Remove club object relation, id, and name from player attributes to avoid redundancies
     const player_keys = Object.keys(player).splice(2, (Object.keys(player).length - 3))
     const player_values = Object.values(player).splice(2, (Object.values(player).length - 3))
 
