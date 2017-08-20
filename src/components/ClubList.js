@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import Club from './Club'
 import { Grid, Image, Menu } from 'semantic-ui-react'
-import { Route, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+
 
 class ClubList extends Component {
 
@@ -10,10 +10,9 @@ class ClubList extends Component {
 
     return (
       <div>
-      <Route exact path='/clubs/:id' component={Club} />
         <Grid container stackable doubling columns={5} divided>
           <Grid.Row>
-            {this.props.clubs.map((club,index) => {
+            {this.props.clubs[0] && this.props.clubs.map((club,index) => {
               return (
                 <Grid.Column>
                   <div key={club.id}>

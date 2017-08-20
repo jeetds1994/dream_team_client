@@ -22,7 +22,16 @@ class ClubContainer extends Component {
       clubs: clubs,
       loading: false
     }))
+
+    fetch(`${BASE_URL}/club_formations`)
+    .then(res => res.json())
+    .then(savedClubFormations => this.setState({savedClubFormations}))
+
+    fetch(`${BASE_URL}/formations`)
+    .then(res => res.json())
+    .then(formationOptions => {this.setState({formationOptions})})
   }
+
 
   handlePageNumClick = (e, { name }) => {
     this.setState({loading: true})
@@ -35,6 +44,10 @@ class ClubContainer extends Component {
     }))
   }
 
+  // filterTeamClubFormations = (clubID) => {
+  //   this.state.savedClubFormations.filter(clubFormation => clubFormation.club_id === clubID)
+  // }
+
   render() {
     const loader = (
       <Dimmer active inverted>
@@ -46,7 +59,7 @@ class ClubContainer extends Component {
       {this.state.loading ? loader : null}
         <Switch>
           <Route exact path='/clubs' render={() => <ClubList clubs={this.state.clubs} handlePageNumClick={this.handlePageNumClick} activeItem={this.state.activeItem} />} />
-          <Route path='/clubs/:id' component={Club} />
+          <Route path='/clubs/:id' render={(props) => <Club formationOptions={this.state.formationOptions} savedClubFormations={this.state.savedClubFormations} {...props} />} />
         </Switch>
       </div>
     )

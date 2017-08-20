@@ -14,7 +14,7 @@ class PlayerList extends Component {
       <Route exact path='/players/:id' component={Player} />
         <Grid container stackable doubling columns={5} divided>
           <Grid.Row>
-            {this.props.players.map((player,index) => {
+            {this.props.players[0] && this.props.players.map((player,index) => {
               return (
                 <Grid.Column>
                   <div key={player.id}>
