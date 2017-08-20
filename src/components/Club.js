@@ -29,48 +29,29 @@ class Club extends Component {
   .then(resp => resp.json())
   .then(json => {
 
-
-    // function compare(a, b) {
-    //   // Use toUpperCase() to ignore character casing
-    //   const genreA = a.genre.toUpperCase();
-    //   const genreB = b.genre.toUpperCase();
-    //
-    //   let comparison = 0;
-    //   if (genreA > genreB) {
-    //     comparison = 1;
-    //   } else if (genreA < genreB) {
-    //     comparison = -1;
-    //   }
-    //   return comparison;
-    // }
-
-    // items.sort(function(a, b) {
-    //   var nameA = a.name.toUpperCase(); // ignore upper and lowercase
-    //   var nameB = b.name.toUpperCase(); // ignore upper and lowercase
-    //   if (nameA < nameB) {
-    //     return -1;
-    //   }
-    //   if (nameA > nameB) {
-    //     return 1;
-    //   }
-    //
-    //   // names must be equal
-    //   return 0;
-    // });
+    // Sort players on ratings
+    json.players.sort(function(a, b) {
+      var playerA = a.rating
+      var playerB = b.rating
+      if (playerA < playerB) {
+        return 1
+      }
+      if (playerA > playerB) {
+        return -1
+      }
+      return 0
+    })
 
 
-    // homes.sort(function(a, b) {
-    //   return parseFloat(a.price) - parseFloat(b.price);
-    // });
-    // string1.localeCompare(string2)
-    // (string1 > string2) - (string1 < string2)
-
+    /////////////////////////////
+    // TODO Next line is still giving errors periodically
+    /////////////////////////////
     let savedClubFormations = this.props.savedClubFormations.filter(savedClubFormation => savedClubFormation.club.id === parseInt(clubID,10))
     let formation = this.props.formationOptions[0]
     let goalkeepers = json.players.filter(player => player.club_position === 'GK')
     let defenders = json.players.filter(player => player.club_position.includes('B'))
     let midfielders = json.players.filter(player => player.club_position.includes('M') || player.club_position === 'RW' || player.club_position === 'LW')
-    let forwards = json.players.filter(player => player.club_position.includes('F') || player.club_position === 'ST' || player.club_position === 'RW' || player.club_position === 'LW')
+    let forwards = json.players.filter(player => player.club_position.includes('F') || player.club_position.includes('S')) // || player.club_position === 'RW' || player.club_position === 'LW')
     let starters = this.getStarters(formation, goalkeepers, defenders, midfielders, forwards)
     let bench = this.getBench(starters, json.players)
 
@@ -87,27 +68,6 @@ class Club extends Component {
       effectiveness_score: this.effectiveness_score(starters)
       })
     })
-
-
-    // if (!this.props.formationOptions) {
-    //   fetch(`${BASE_URL}/formations`)
-    //   .then(res => res.json())
-    //   .then(formationOptions => {
-    //     // let starters = [].concat(this.state.goalkeepers.slice(0, this.state.formation.goalkeepers), this.state.defenders.slice(0, this.state.formation.defenders), this.state.midfielders.slice(0, this.state.formation.midfielders), this.state.forwards.slice(0, this.state.formation.forwards))
-    //     // let bench = []
-    //     // this.state.currentClub.players.map(player => {
-    //     //   if (!starters.includes(player)) {
-    //     //     bench.push(player)
-    //     //   }})
-    //
-    //     this.setState({
-    //       // formationOptions,
-    //       formation: formationOptions[0],
-    //       // starters: starters,
-    //       // bench: bench,
-    //       // effectiveness_score: this.effectiveness_score(starters)
-    //     })})
-    // }
   }
 
   // componentWillReceiveProps(nextProps) {
@@ -128,6 +88,23 @@ class Club extends Component {
   // }
 
   getStarters = (formation ,goalkeepers, defenders, midfielders, forwards) => {
+
+    // Checking to make sure there are enough players for a position in a given formation
+    // Take from midfielders to make up for shortage of defenders
+    if (formation.defenders > defenders.length) {
+      defenders = defenders.concat(midfielders.slice(formation.midfielders, formation.midfielders + (formation.defenders - defenders.length)))
+    }
+
+    // Take from forwards to make up for shortage of midfielders
+    if (formation.midfielders > midfielders.length) {
+      midfielders = midfielders.concat(forwards.slice(formation.forwards, formation.forwards + (formation.midfielders - midfielders.length)))
+    }
+
+    // Take from midfielders to make up for shortage of forwards
+    if (formation.forwards > forwards.length) {
+      forwards = forwards.concat(midfielders.slice(formation.midfielders, formation.midfielders + (formation.forwards - forwards.length)))
+    }
+
     let starters = [].concat(goalkeepers.slice(0, formation.goalkeepers), defenders.slice(0, formation.defenders), midfielders.slice(0, formation.midfielders), forwards.slice(0, formation.forwards))
     return starters
   }
@@ -238,7 +215,7 @@ class Club extends Component {
 
     handleFormationChange = event => {
       /////////////////////////////
-      // TODO This line is still giving errors periodically
+      // TODO Next line is still giving errors periodically
       /////////////////////////////
       let new_formation = this.props.formationOptions.filter(formation => formation.format === event.target.innerText)[0]
       let starters = this.getStarters(new_formation, this.state.goalkeepers, this.state.defenders, this.state.midfielders, this.state.forwards)
@@ -261,6 +238,7 @@ class Club extends Component {
       let midfielders
       let forwards
 
+      // Hard code for each type of formation available in formationOptions
       if (new_formation.format === "4-4-2") {
         goalkeepers = this.state.currentClub.players.filter(player => player.id === savedFormation.player_1)
         defenders = this.state.currentClub.players.filter(player => player.id === savedFormation.player_2 || player.id === savedFormation.player_3 || player.id === savedFormation.player_4 || player.id === savedFormation.player_5)
@@ -365,7 +343,6 @@ class Club extends Component {
     const formationOptions = this.props.formationOptions ? this.props.formationOptions.map(formation => ({key: formation.format, value: formation.format, text: formation.format})) : null
     const savedClubFormations = this.state.savedClubFormations && this.state.savedClubFormations.map(club_formation => ({key: club_formation.formation.format, value: club_formation.formation.format, text: club_formation.formation.format}))
 
-
     return(
       <div>
         <h3>
@@ -382,7 +359,10 @@ class Club extends Component {
         <br/>
         Starting Lineup:
         <ul>
-          {this.state.starters[0] && this.state.starters.map((player,index) => <li key={index} id={index} value={player.id} onClick={this.handlePlayerClick}>{player.name} -- {player.club_position}</li>)}
+          {this.state.starters[0] && this.state.starters.map((player,index) => (
+            <li data-preferred-position={player.club_position} key={index} id={index} value={player.id} onClick={this.handlePlayerClick}>
+              {player.name} -- {player.club_position}
+            </li>))}
         </ul>
 
         <br/>
@@ -401,7 +381,10 @@ class Club extends Component {
 
         Bench:
         <ul>
-          {this.state.bench[0] && this.state.bench.map((player,index) => <li key={index} id={index} value={player.id} onClick={this.handlePlayerClick}>{player.name} -- {player.club_position}</li>)}
+          {this.state.bench[0] && this.state.bench.map((player,index) => (
+            <li key={index} id={index} value={player.id} onClick={this.handlePlayerClick}>
+              {player.name} -- {player.club_position}
+            </li>))}
         </ul>
       </div>
     )
