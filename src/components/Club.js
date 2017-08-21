@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Image, Button, Dropdown, Input } from 'semantic-ui-react'
+import FormationChart from './FormationChart'
 // import _isEqual from 'lodash/isEqual'
 
 const BASE_URL = process.env.REACT_APP_API
@@ -231,6 +232,9 @@ class Club extends Component {
 
     handleSavedFormationChange = event => {
       let savedFormation = this.state.savedClubFormations.filter(club_formation => club_formation.formation.format === event.target.innerText)[0]
+      /////////////////////////////
+      // TODO Next line is still giving errors periodically
+      /////////////////////////////
       let new_formation = savedFormation.formation
 
       let goalkeepers
@@ -352,6 +356,15 @@ class Club extends Component {
 
         <h4>Current Clout: {this.state.effectiveness_score} Gucci Belts</h4>
 
+        <FormationChart club={this.state.currentClub} formation={this.state.formation} starters={this.state.starters} />
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
         Team Formation: <Dropdown value={this.state.formation.format} search selection options={formationOptions} onChange={this.handleFormationChange}/>
         <br/>
         Saved Formations: <Dropdown search selection options={savedClubFormations} onChange={this.handleSavedFormationChange}/>
