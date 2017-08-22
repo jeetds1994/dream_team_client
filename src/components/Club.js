@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Image, Button, Dropdown, Input } from 'semantic-ui-react'
+import { Dimmer, Loader, Image, Button, Dropdown, Input } from 'semantic-ui-react'
 import FormationChart from './FormationChart'
 import PlayerRadarChart from './PlayerRadarChart'
 // import _isEqual from 'lodash/isEqual'
@@ -9,6 +9,7 @@ const BASE_URL = process.env.REACT_APP_API
 class Club extends Component {
 
     state = {
+      loading: true,
       currentClub: {},
       starters: [],
       bench: [],
@@ -30,6 +31,8 @@ class Club extends Component {
   fetch(`${BASE_URL}/clubs/${clubID}`)
   .then(resp => resp.json())
   .then(json => {
+    console.log('Page is loading?', this.state.loading)
+
 
     // Sort players on ratings
     json.players.sort(function(a, b) {
@@ -58,6 +61,7 @@ class Club extends Component {
     let bench = this.getBench(starters, json.players)
 
     this.setState({
+      loading: false,
       currentClub: json,
       formation: formation,
       savedClubFormations: savedClubFormations,
@@ -343,13 +347,26 @@ class Club extends Component {
       })})
     }
 
+    clearSelections = event => {
+      this.setState({
+        firstSelection: {},
+        secondSelection: {}
+      })
+    }
+
   render() {
+    const loader = (
+      <Dimmer active inverted>
+        <Loader size='large' inverted content='Loading...' />
+      </Dimmer>)
+
     // Semantic dropdown requires these three fields to properly display and select options
     const formationOptions = this.props.formationOptions ? this.props.formationOptions.map(formation => ({key: formation.format, value: formation.format, text: formation.format})) : null
     const savedClubFormations = this.state.savedClubFormations && this.state.savedClubFormations.map(club_formation => ({key: club_formation.formation.format, value: club_formation.formation.format, text: club_formation.formation.format}))
 
     return(
       <div>
+        {this.state.loading ? loader : null}
         <h3>
           <Image width='50' src={this.state.currentClub.badge} avatar />
           {this.state.currentClub.name}
@@ -380,10 +397,13 @@ class Club extends Component {
         <br/>
         Player 2: {this.state.secondSelection.name ? this.state.secondSelection.name : null}
         <br/>
-        <Button onClick={this.handleChangePlayers}>Change Lineup!</Button>
+        <Button onClick={this.clearSelections}>Clear Player Selections</Button>
         <br/>
         <br/>
-        <Button onClick={this.handleSaveLineup}>Submit Lineup!</Button>
+        <Button onClick={this.handleChangePlayers}>Change Lineup</Button>
+        <br/>
+        <br/>
+        <Button onClick={this.handleSaveLineup}>Save Lineup</Button>
         <br/>
         Set as Default? <Input type="checkbox" onClick={this.handleSetFormationDefault} value={this.state.setFormationDefault} />
         <br/>

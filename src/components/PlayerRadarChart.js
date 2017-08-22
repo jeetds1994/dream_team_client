@@ -437,6 +437,7 @@ class PlayerRadarChart extends Component {
                 ticks: {
                         suggestedMin: 0,
                         suggestedMax: 100,
+                        fontSize: 9
                       }
                 },
       legend:   {

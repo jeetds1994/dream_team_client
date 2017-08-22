@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
 import PlayerRadarChart from './PlayerRadarChart'
+import { Dimmer, Loader } from 'semantic-ui-react'
 // import { Image, Button } from 'semantic-ui-react'
 
 const BASE_URL = process.env.REACT_APP_API
 
 class Player extends Component {
   state = {
-    currentPlayer: {}
+    currentPlayer: {},
+    loading: true
   }
 
   componentDidMount() {
@@ -15,12 +17,17 @@ class Player extends Component {
   .then(resp => resp.json())
   .then(json => {
     this.setState({
-      currentPlayer: json
+      currentPlayer: json,
+      loading: false
       })
     })
   }
 
   render() {
+    const loader = (
+      <Dimmer active inverted>
+        <Loader size='large' inverted content='Loading...' />
+      </Dimmer>)
 
     const player = this.state.currentPlayer
 
@@ -30,6 +37,7 @@ class Player extends Component {
 
     return(
       <div>
+        {this.state.loading ? loader : null}
         <h4>Player Name: {player.name ? player.name : null}</h4>
 
         <br/>

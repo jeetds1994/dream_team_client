@@ -110,7 +110,6 @@ class FormationChart extends Component {
       }
 
       let chartOptions = this.getChartOptions()
-      debugger
 
         this.setState({
           chartData: {
@@ -216,6 +215,14 @@ class FormationChart extends Component {
       backgroundImage: 'url(https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Soccer_Field_Transparant.svg/2000px-Soccer_Field_Transparant.svg.png)'
     }
 
+    function isEmpty(obj) {
+      for(var key in obj) {
+          if(obj.hasOwnProperty(key))
+              return false
+      }
+      return true
+    }
+
     const chartOptions = {
       // This is from https://github.com/emn178/Chart.PieceLabel.js -- Can remove if other solution is found
       // pieceLabel: {
@@ -243,7 +250,7 @@ class FormationChart extends Component {
                  },
       title:    {
                   display: true,
-                  text: `${this.state.club.name}: ${this.state.formation.format}`,
+                  text: !isEmpty(this.state.club) ? `${this.state.club.name}: ${this.state.formation.format}` : '',
                   fontSize: 24,
                   position: "top",
                   fontColor: "black"
