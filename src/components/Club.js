@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Image, Button, Dropdown, Input } from 'semantic-ui-react'
 import FormationChart from './FormationChart'
+import PlayerRadarChart from './PlayerRadarChart'
 // import _isEqual from 'lodash/isEqual'
 
 const BASE_URL = process.env.REACT_APP_API
@@ -358,16 +359,12 @@ class Club extends Component {
 
         <FormationChart club={this.state.currentClub} formation={this.state.formation} starters={this.state.starters} />
         <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
         Team Formation: <Dropdown value={this.state.formation.format} search selection options={formationOptions} onChange={this.handleFormationChange}/>
         <br/>
         Saved Formations: <Dropdown search selection options={savedClubFormations} onChange={this.handleSavedFormationChange}/>
+        <br/>
+        <br/>
+        <PlayerRadarChart player={this.state.firstSelection} secondPlayer={this.state.secondSelection} />
         <br/>
         <br/>
         Starting Lineup:
@@ -403,5 +400,6 @@ class Club extends Component {
     )
   }
 }
+// {this.state.secondSelection.name ? <PlayerRadarChart player={this.state.secondSelection} /> : null}
 
 export default Club

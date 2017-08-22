@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PlayerRadarChart from './PlayerRadarChart'
 // import { Image, Button } from 'semantic-ui-react'
 
 const BASE_URL = process.env.REACT_APP_API
@@ -30,6 +31,14 @@ class Player extends Component {
     return(
       <div>
         <h4>Player Name: {player.name ? player.name : null}</h4>
+
+        <br/>
+        <br/>
+        <PlayerRadarChart player={this.state.currentPlayer} />
+        <br/>
+        <br/>
+
+
         <p>Player Stats:</p>
         <ul>
         {player.name ? player_keys.map((k,index) => <li key={index}>{`${k.split('_').map(word => word[0].toUpperCase() + word.substr(1)).join(' ')} -- ${player_values[index]}`}</li>) : null}
