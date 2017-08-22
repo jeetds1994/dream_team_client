@@ -197,9 +197,17 @@ class PlayerRadarChart extends Component {
         skillRatingSecond = average(skillAttributesSecond).toFixed(2)
       }
 
+      // Quick function to test if an object is empty
+      function isEmpty(obj) {
+        for(var key in obj) {
+            if(obj.hasOwnProperty(key))
+                return false
+        }
+        return true
+      }
 
-      if (!nextProps.player) {
-        console.log(nextProps.player)
+      if (isEmpty(nextProps.player) && isEmpty(nextProps.secondPlayer)) {
+        console.log("Case 1: There isn't nextProps.player yet")
         this.setState({
           chartData: {
             labels: ['Attack', 'Defense', 'Mental', 'Physical', 'Skill'],
@@ -213,11 +221,13 @@ class PlayerRadarChart extends Component {
                 backgroundColor: 'rgba(0, 200, 200, 0.4)'
               }]
           },
+          player: nextProps.player,
+          secondPlayer: nextProps.secondPlayer
         })
       }
 
-      if (nextProps.player.club_position !== "GK" && !nextProps.secondPlayer) {
-        console.log(nextProps.player.club_position)
+      if (!isEmpty(nextProps.player) && nextProps.player.club_position !== "GK" && isEmpty(nextProps.secondPlayer)) {
+        console.log("Case 2: nextProps.player is not a GK, and there isn't a nextProps.secondPlayer. nextProps.player.club_position is:", nextProps.player.club_position)
         this.setState({
           chartData: {
             labels: ['Attack', 'Defense', 'Mental', 'Physical', 'Skill'],
@@ -233,10 +243,12 @@ class PlayerRadarChart extends Component {
               }]
           },
           player: nextProps.player,
+          secondPlayer: nextProps.secondPlayer
         })
       }
 
-      if (nextProps.player.club_position === "GK" && !nextProps.secondPlayer) {
+      if (!isEmpty(nextProps.player) && nextProps.player.club_position === "GK" && isEmpty(nextProps.secondPlayer)) {
+        console.log("Case 3: nextProps.player IS a GK, and there isn't a nextProps.secondPlayer. nextProps.player.club_position is:", nextProps.player.club_position)
         this.setState({
           chartData: {
             labels: ['Positioning', 'Diving', 'Kicking', 'Handling', 'Reflexes'],
@@ -252,42 +264,12 @@ class PlayerRadarChart extends Component {
               }]
           },
           player: nextProps.player,
-        })
-      }
-
-
-      if (nextProps.player.club_position !== "GK" && nextProps.secondPlayer && nextProps.secondPlayer.club_position !== "GK") {
-        console.log(nextProps.player.club_position, nextProps.secondPlayer.club_position)
-        this.setState({
-          chartData: {
-            labels: ['Attack', 'Defense', 'Mental', 'Physical', 'Skill'],
-            datasets: [{
-              label: `${nextProps.player.name} vs. `,
-                data: [attackRating, defenseRating, mentalityRating, physicalRating, skillRating],
-      	        pointRadius: 5,
-      	        pointHoverRadius: 5,
-      	        pointBorderColor: "#fff",
-      	        pointBorderWidth: 1,
-      	        pointHoverBorderWidth: 1,
-                backgroundColor: 'rgba(0, 200, 200, 0.3)'
-              },
-              {
-                  label: nextProps.secondPlayer.name,
-                  data: [attackRatingSecond, defenseRatingSecond, mentalityRatingSecond, physicalRatingSecond, skillRatingSecond],
-        	        pointRadius: 5,
-        	        pointHoverRadius: 5,
-        	        pointBorderColor: "#fff",
-        	        pointBorderWidth: 1,
-        	        pointHoverBorderWidth: 1,
-                  backgroundColor: 'rgba(240, 50, 50, 0.3)',
-                }]
-          },
-          player: nextProps.player,
           secondPlayer: nextProps.secondPlayer
         })
       }
 
-      if (nextProps.player.club_position === "GK" && nextProps.secondPlayer && nextProps.secondPlayer.club_position === "GK") {
+      if (nextProps.player.club_position === "GK" && !isEmpty(nextProps.secondPlayer) && nextProps.secondPlayer.club_position === "GK") {
+        console.log("Case 4: nextProps.player IS a GK, and there IS a nextProps.secondPlayer, and secondPlayer IS a GK. nextProps.player.club_position and nextProps.secondPlayer.club_position is:", nextProps.player.club_position, nextProps.secondPlayer.club_position)
         this.setState({
           chartData: {
             labels: ['Positioning', 'Diving', 'Kicking', 'Handling', 'Reflexes'],
@@ -303,7 +285,7 @@ class PlayerRadarChart extends Component {
               },
               {
                   label: nextProps.secondPlayer.name,
-                  data: goalieAttributes,
+                  data: goalieAttributesSecond,
         	        pointRadius: 2,
         	        pointHoverRadius: 3,
         	        pointBorderColor: "#fff",
@@ -312,6 +294,95 @@ class PlayerRadarChart extends Component {
                   backgroundColor: 'rgba(240, 100, 90, 0.5)',
                 }]
           },
+          player: nextProps.player,
+          secondPlayer: nextProps.secondPlayer
+        })
+      }
+
+      if (!isEmpty(nextProps.secondPlayer) && nextProps.secondPlayer.club_position === "GK" && isEmpty(nextProps.player)) {
+        console.log("Case 5: There isn't a nextProps.player, but nextProps.secondPlayer IS a GK. nextProps.secondPlayer.club_position is:", nextProps.player.club_position)
+        this.setState({
+          chartData: {
+            labels: ['Positioning', 'Diving', 'Kicking', 'Handling', 'Reflexes'],
+            datasets: [{
+                label: nextProps.secondPlayer.name,
+                data: goalieAttributesSecond,
+      	        pointRadius: 2,
+      	        pointHoverRadius: 3,
+      	        pointBorderColor: "#fff",
+      	        pointBorderWidth: 2,
+      	        pointHoverBorderWidth: 2,
+                backgroundColor: 'rgba(240, 50, 50, 0.3)',
+              }]
+          },
+          player: nextProps.player,
+          secondPlayer: nextProps.secondPlayer
+        })
+      }
+
+      if (!isEmpty(nextProps.player) && nextProps.player.club_position !== "GK" && !isEmpty(nextProps.secondPlayer) && nextProps.secondPlayer.club_position !== "GK") {
+        console.log("Case 6: nextProps.player is not a GK, and there IS a nextProps.secondPlayer, and secondPlayer isn't a GK. nextProps.player.club_position and nextProps.secondPlayer.club_position is:", nextProps.player.club_position, nextProps.secondPlayer.club_position)
+        this.setState({
+          chartData: {
+            labels: ['Attack', 'Defense', 'Mental', 'Physical', 'Skill'],
+            datasets: [{
+              label: nextProps.player.name,
+                data: [attackRating, defenseRating, mentalityRating, physicalRating, skillRating],
+      	        pointRadius: 5,
+      	        pointHoverRadius: 5,
+      	        pointBorderColor: "#fff",
+      	        pointBorderWidth: 1,
+      	        pointHoverBorderWidth: 1,
+                backgroundColor: 'rgba(0, 200, 200, 0.3)'
+              },
+              {
+                label: nextProps.secondPlayer.name,
+                data: [attackRatingSecond, defenseRatingSecond, mentalityRatingSecond, physicalRatingSecond, skillRatingSecond],
+      	        pointRadius: 5,
+      	        pointHoverRadius: 5,
+      	        pointBorderColor: "#fff",
+      	        pointBorderWidth: 1,
+      	        pointHoverBorderWidth: 1,
+                backgroundColor: 'rgba(240, 50, 50, 0.3)',
+              }]
+          },
+          player: nextProps.player,
+          secondPlayer: nextProps.secondPlayer
+        })
+      }
+
+      if (!isEmpty(nextProps.secondPlayer) && nextProps.secondPlayer.club_position !== "GK" && isEmpty(nextProps.player)) {
+        console.log("Case 7: nextProps.secondPlayer is not a GK, and there isn't a nextProps.player. nextProps.secondPlayer.club_position is:", nextProps.secondPlayer.club_position)
+        this.setState({
+          chartData: {
+            labels: ['Attack', 'Defense', 'Mental', 'Physical', 'Skill'],
+            datasets: [{
+                label: nextProps.secondPlayer.name,
+                data: [attackRatingSecond, defenseRatingSecond, mentalityRatingSecond, physicalRatingSecond, skillRatingSecond],
+      	        pointRadius: 5,
+      	        pointHoverRadius: 5,
+      	        pointBorderColor: "#fff",
+      	        pointBorderWidth: 1,
+      	        pointHoverBorderWidth: 1,
+                backgroundColor: 'rgba(240, 50, 50, 0.3)',
+              }]
+          },
+          player: nextProps.player,
+          secondPlayer: nextProps.secondPlayer
+        })
+      }
+
+      if (!isEmpty(nextProps.player) && nextProps.player.club_position !== "GK" && !isEmpty(nextProps.secondPlayer) && nextProps.secondPlayer.club_position === "GK") {
+        console.log("Case 8: There are two players, but one is a goalie and one is a field player")
+        this.setState({
+          player: nextProps.player,
+          secondPlayer: nextProps.secondPlayer
+        })
+      }
+
+      if (!isEmpty(nextProps.player) && nextProps.player.club_position === "GK" && !isEmpty(nextProps.secondPlayer) && nextProps.secondPlayer.club_position !== "GK") {
+        console.log("Case 9: There are two players, but one is a goalie and one is a field player")
+        this.setState({
           player: nextProps.player,
           secondPlayer: nextProps.secondPlayer
         })
@@ -325,6 +396,15 @@ class PlayerRadarChart extends Component {
   // }
 
   render() {
+
+    function isEmpty(obj) {
+      for(var key in obj) {
+          if(obj.hasOwnProperty(key))
+              return false
+      }
+      return true
+    }
+
     const divStyle = {
       width: '300px',
       height: '300px'
@@ -336,7 +416,7 @@ class PlayerRadarChart extends Component {
       showAllTooltips: true, //only needed if you enable the componentWillMount method commented above
       title:    {
                   display: true,
-                  text: `#${this.state.player.club_kit} ${this.state.player.club_position} ${this.state.player.name} -- Age ${this.state.player.age}`,
+                  text: isEmpty(this.state.player) && isEmpty(this.state.secondPlayer) ? "Please Select a Player" : isEmpty(this.state.secondPlayer) ? `#${this.state.player.club_kit} ${this.state.player.club_position} ${this.state.player.name} -- Age ${this.state.player.age}` : isEmpty(this.state.player) ? `#${this.state.secondPlayer.club_kit} ${this.state.secondPlayer.club_position} ${this.state.secondPlayer.name} -- Age ${this.state.secondPlayer.age}` : this.state.player.club_position === `GK` && this.state.secondPlayer.club_position !== `GK` ? `You can't compare Keepers and Field Players` : this.state.player.club_position !== `GK` && this.state.secondPlayer.club_position === `GK` ? `You can't compare Keepers and Field Players` : `${this.state.player.name} vs. ${this.state.secondPlayer.name}`,
                   fontSize: 16,
                   position: "top",
                   fontColor: "black"
