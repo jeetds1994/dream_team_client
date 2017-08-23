@@ -1,24 +1,15 @@
-.App {
-  text-align: center;
+#landing-page {
+  background-image: url('./assets/jonathan-petersson-210341.jpg');
+  width: 100%;
+  height: 50%;
+  background-size: cover;
+  position: static;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
-}
-
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
+.home-text {
+  text-align: center !important;
   color: white;
-}
-
-.App-intro {
-  font-size: large;
-}
-
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  font-size: 32;
 }

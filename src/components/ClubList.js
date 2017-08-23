@@ -10,7 +10,18 @@ class ClubList extends Component {
 
     return (
       <div>
+        <br/>
+        <br/>
         <Grid container stackable doubling columns={5} divided>
+          <Menu pagination>
+            <Menu.Item name='1' active={activeItem === '1'} onClick={this.props.handlePageNumClick} />
+            <Menu.Item name='2' active={activeItem === '2'} onClick={this.props.handlePageNumClick} />
+            <Menu.Item name='3' active={activeItem === '3'} onClick={this.props.handlePageNumClick} />
+            <Menu.Item name='4' active={activeItem === '4'} onClick={this.props.handlePageNumClick} />
+            <Menu.Item name='5' active={activeItem === '5'} onClick={this.props.handlePageNumClick} />
+            <Menu.Item name='6' active={activeItem === '6'} onClick={this.props.handlePageNumClick} />
+            <Menu.Item name='7' active={activeItem === '7'} onClick={this.props.handlePageNumClick} />
+          </Menu>
           <Grid.Row>
             {this.props.clubs[0] && this.props.clubs.map((club,index) => {
               return (
@@ -24,15 +35,6 @@ class ClubList extends Component {
               )
             })}
           </Grid.Row>
-          <Menu pagination>
-            <Menu.Item name='1' active={activeItem === '1'} onClick={this.props.handlePageNumClick} />
-            <Menu.Item name='2' active={activeItem === '2'} onClick={this.props.handlePageNumClick} />
-            <Menu.Item name='3' active={activeItem === '3'} onClick={this.props.handlePageNumClick} />
-            <Menu.Item name='4' active={activeItem === '4'} onClick={this.props.handlePageNumClick} />
-            <Menu.Item name='5' active={activeItem === '5'} onClick={this.props.handlePageNumClick} />
-            <Menu.Item name='6' active={activeItem === '6'} onClick={this.props.handlePageNumClick} />
-            <Menu.Item name='7' active={activeItem === '7'} onClick={this.props.handlePageNumClick} />
-          </Menu>
         </Grid>
       </div>
     )

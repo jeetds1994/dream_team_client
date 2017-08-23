@@ -1,10 +1,10 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Dream Team",
+  "name": "Dream Team",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "192x192",
+      "src": "logo.ico",
+      "sizes": "124x124",
       "type": "image/png"
     }
   ],
