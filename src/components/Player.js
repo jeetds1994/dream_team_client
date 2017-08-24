@@ -131,13 +131,13 @@ class Player extends Component {
     const player_values = Object.values(player).splice(2, (Object.values(player).length - 3))
 
     // Quick function to test if an object is empty
-    function isEmpty(obj) {
-      for(var key in obj) {
-          if(obj.hasOwnProperty(key))
-              return false
-      }
-      return true
-    }
+    // function isEmpty(obj) {
+    //   for(var key in obj) {
+    //       if(obj.hasOwnProperty(key))
+    //           return false
+    //   }
+    //   return true
+    // }
 
     return(
       <div>

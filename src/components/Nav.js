@@ -76,7 +76,7 @@ class Nav extends Component {
         </div>
         <div className='content'>
           <div className='title'>
-            <a href={`/clubs/${result.name}`} target='_blank'>
+            <a href={`/clubs/${result.url}`}>
             {result.name}
             </a>
           </div>

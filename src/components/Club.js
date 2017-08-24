@@ -51,7 +51,7 @@ class Club extends Component {
     /////////////////////////////
     // TODO Next line is still giving errors periodically
     /////////////////////////////
-    let savedClubFormations = this.props.savedClubFormations.filter(savedClubFormation => savedClubFormation.club.id === parseInt(clubID,10))
+    // let savedClubFormations = this.props.savedClubFormations.filter(savedClubFormation => savedClubFormation.club.id === parseInt(clubID,10))
     let formation = this.props.formationOptions[0]
     let goalkeepers = json.players.filter(player => player.club_position === 'GK')
     let defenders = json.players.filter(player => player.club_position.includes('B'))
@@ -64,7 +64,7 @@ class Club extends Component {
       loading: false,
       currentClub: json,
       formation: formation,
-      savedClubFormations: savedClubFormations,
+      // savedClubFormations: savedClubFormations,
       starters: starters,
       bench: bench,
       goalkeepers: goalkeepers,
@@ -421,7 +421,7 @@ class Club extends Component {
                   <Image width='50' src={this.state.currentClub.badge} avatar />
                   {this.state.currentClub.name}
                 </div>
-                <div style={{fontSize: '16px'}}>
+                <div style={{fontSize: '20px'}}>
                   <h4>Effectiveness Score: {this.state.effectiveness_score}</h4>
                 </div>
               </Grid.Column>

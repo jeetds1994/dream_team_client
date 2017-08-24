@@ -19,7 +19,49 @@ class App extends Component {
     fetch(`${BASE_URL}/clubs?page=1`)
     .then(res => res.json())
     .then(clubs => this.setState({
-      clubs: clubs
+      clubs: this.state.clubs.concat(clubs)
+    }))
+
+    fetch(`${BASE_URL}/clubs?page=1`)
+    .then(res => res.json())
+    .then(clubs => this.setState({
+      clubs: this.state.clubs.concat(clubs)
+    }))
+
+    fetch(`${BASE_URL}/clubs?page=2`)
+    .then(res => res.json())
+    .then(clubs => this.setState({
+      clubs: this.state.clubs.concat(clubs)
+    }))
+
+    fetch(`${BASE_URL}/clubs?page=3`)
+    .then(res => res.json())
+    .then(clubs => this.setState({
+      clubs: this.state.clubs.concat(clubs)
+    }))
+
+    fetch(`${BASE_URL}/clubs?page=4`)
+    .then(res => res.json())
+    .then(clubs => this.setState({
+      clubs: this.state.clubs.concat(clubs)
+    }))
+
+    fetch(`${BASE_URL}/clubs?page=5`)
+    .then(res => res.json())
+    .then(clubs => this.setState({
+      clubs: this.state.clubs.concat(clubs)
+    }))
+
+    fetch(`${BASE_URL}/clubs?page=6`)
+    .then(res => res.json())
+    .then(clubs => this.setState({
+      clubs: this.state.clubs.concat(clubs)
+    }))
+
+    fetch(`${BASE_URL}/clubs?page=7`)
+    .then(res => res.json())
+    .then(clubs => this.setState({
+      clubs: this.state.clubs.concat(clubs)
     }))
   }
 
