@@ -7,7 +7,7 @@ const DataStatistics = () => (
       <Statistic label='Leagues' value='30+' />
       <Statistic label='Teams' value='634' />
       <Statistic label='Players' value='17,588' />
-      <Statistic label='Attributes' value='40+' />
+      <Statistic label='Player Attributes' value='40+' />
     </Statistic.Group>
   </div>
 )

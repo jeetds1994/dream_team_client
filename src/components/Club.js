@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Dimmer, Loader, Image, Button, Dropdown, Input } from 'semantic-ui-react'
+import { Dimmer, Loader, Image, Button, Dropdown, Input, Grid } from 'semantic-ui-react'
 import FormationChart from './FormationChart'
 import PlayerRadarChart from './PlayerRadarChart'
 // import _isEqual from 'lodash/isEqual'
@@ -93,7 +93,7 @@ class Club extends Component {
   //   }
   // }
 
-  getStarters = (formation ,goalkeepers, defenders, midfielders, forwards) => {
+  getStarters = (formation, goalkeepers, defenders, midfielders, forwards) => {
 
     // Checking to make sure there are enough players for a position in a given formation
     // Take from midfielders to make up for shortage of defenders
@@ -124,6 +124,42 @@ class Club extends Component {
   effectiveness_score = (starters) => {
     let total = 0
     starters.slice(0,11).map(player => (total += player.rating))
+    return (total/11).toFixed(1)
+  }
+
+  attack_score = (starters) => {
+    let total = 0
+    starters.slice(this.state.formation.defenders + 1,11).map(player => (total += player.rating))
+    return (total/(10 - this.state.formation.defenders)).toFixed(1)
+  }
+
+  defense_score = (starters) => {
+    let total = 0
+    starters.slice(1,this.state.formation.defenders + 1).map(player => (total += player.rating))
+    return (total/(this.state.formation.defenders)).toFixed(1)
+  }
+
+  gk_score = (starters) => {
+    let total = 0
+    starters.slice(0,1).map(player => (total += player.rating))
+    return (total/1).toFixed(1)
+  }
+
+  speed_score = (starters) => {
+    let total = 0
+    starters.slice(1,11).map(player => (total += player.speed + player.agility))
+    return (total/20).toFixed(1)
+  }
+
+  mental_score = (starters) => {
+    let total = 0
+    starters.slice(1,11).map(player => (total += player.aggression + player.vision + player.composure))
+    return (total/30).toFixed(1)
+  }
+
+  age_score = (starters) => {
+    let total = 0
+    starters.slice(0,11).map(player => (total += player.age))
     return (total/11).toFixed(1)
   }
 
@@ -364,62 +400,106 @@ class Club extends Component {
     const formationOptions = this.props.formationOptions ? this.props.formationOptions.map(formation => ({key: formation.format, value: formation.format, text: formation.format})) : null
     const savedClubFormations = this.state.savedClubFormations && this.state.savedClubFormations.map(club_formation => ({key: club_formation.formation.format, value: club_formation.formation.format, text: club_formation.formation.format}))
 
+    // Quick function to test if an object is empty
+    function isEmpty(obj) {
+      for(var key in obj) {
+          if(obj.hasOwnProperty(key))
+              return false
+      }
+      return true
+    }
+
     return(
       <div>
-        {this.state.loading ? loader : null}
-        <h3>
-          <Image width='50' src={this.state.currentClub.badge} avatar />
-          {this.state.currentClub.name}
-        </h3>
+        <div>
+          {this.state.loading ? loader : null}
 
-        <h4>Current Clout: {this.state.effectiveness_score} Gucci Belts</h4>
+          <Grid style={{padding: '20px 0px 0px 20px'}}>
+            <Grid.Row>
+              <Grid.Column width={3}>
+                <div style={{fontSize: '24px'}}>
+                  <Image width='50' src={this.state.currentClub.badge} avatar />
+                  {this.state.currentClub.name}
+                </div>
+                <div style={{fontSize: '16px'}}>
+                  <h4>Effectiveness Score: {this.state.effectiveness_score}</h4>
+                </div>
+              </Grid.Column>
+              <Grid.Column width={12} style={{padding: '15px 15px 15px 15px'}}>
+                <h4 style={{padding: '0px 0px 0px 40px'}}>Overall Starting Lineup Ratings</h4>
 
-        <FormationChart club={this.state.currentClub} formation={this.state.formation} starters={this.state.starters} />
-        <br/>
-        Team Formation: <Dropdown value={this.state.formation.format} search selection options={formationOptions} onChange={this.handleFormationChange}/>
-        <br/>
-        Saved Formations: <Dropdown search selection options={savedClubFormations} onChange={this.handleSavedFormationChange}/>
-        <br/>
-        <br/>
-        <PlayerRadarChart player={this.state.firstSelection} secondPlayer={this.state.secondSelection} />
-        <br/>
-        <br/>
-        Starting Lineup:
-        <ul>
-          {this.state.starters[0] && this.state.starters.map((player,index) => (
-            <li data-preferred-position={player.club_position} key={index} id={index} value={player.id} onClick={this.handlePlayerClick}>
-              {player.name} -- {player.club_position}
-            </li>))}
-        </ul>
+                <Grid style={{fontSize: '16px'}}>
+                    <Grid.Column width={2} style={{padding: '20px 0px', margin: '0px -60px 0px 20px'}}>
+                      Attack: {!isEmpty(this.state.starters) ? this.attack_score(this.state.starters) : null}<br/>
+                      Defense: {!isEmpty(this.state.starters) ? this.defense_score(this.state.starters) : null}<br/>
+                      GK: {!isEmpty(this.state.starters) ? this.gk_score(this.state.starters) : null}<br/>
+                    </Grid.Column>
+                    <Grid.Column width={2} style={{padding: '20px 0px', margin: '0px 0px 0px 5px'}}>
+                      Speed: {!isEmpty(this.state.starters) ? this.speed_score(this.state.starters) : null}<br/>
+                      Mental: {!isEmpty(this.state.starters) ? this.mental_score(this.state.starters) : null}<br/>
+                      Average Age: {!isEmpty(this.state.starters) ? this.age_score(this.state.starters) : null}<br/>
+                    </Grid.Column>
+                  </Grid>
 
-        <br/>
-        Player 1: {this.state.firstSelection.name ? this.state.firstSelection.name : null}
-        <br/>
-        Player 2: {this.state.secondSelection.name ? this.state.secondSelection.name : null}
-        <br/>
-        <Button onClick={this.clearSelections}>Clear Player Selections</Button>
-        <br/>
-        <br/>
-        <Button onClick={this.handleChangePlayers}>Change Lineup</Button>
-        <br/>
-        <br/>
-        <Button onClick={this.handleSaveLineup}>Save Lineup</Button>
-        <br/>
-        Set as Default? <Input type="checkbox" onClick={this.handleSetFormationDefault} value={this.state.setFormationDefault} />
-        <br/>
-        <br/>
+            </Grid.Column>
+            </Grid.Row>
+            <Grid.Row>
+              <Grid.Column width={3}>
+                <h4>Starting Lineup:</h4>
+                <ul>
+                  {this.state.starters[0] && this.state.starters.map((player,index) => (
+                    <li data-preferred-position={player.club_position} key={index} id={index} value={player.id} onClick={this.handlePlayerClick}>
+                      {this.state.formation[`position_${index+1}`]}: #{player.club_kit} {player.name} - {player.rating}
+                    </li>))}
+                </ul>
+                <h4>Bench:</h4>
+                <ul>
+                  {this.state.bench[0] && this.state.bench.map((player,index) => (
+                    <li key={index} id={index} value={player.id} onClick={this.handlePlayerClick}>
+                      {player.club_position}: #{player.club_kit} {player.name} - {player.rating}
+                    </li>))}
+                </ul>
+              </Grid.Column>
+              <Grid.Column width={3}>
+                <PlayerRadarChart player={this.state.firstSelection} secondPlayer={this.state.secondSelection} />
 
-        Bench:
-        <ul>
-          {this.state.bench[0] && this.state.bench.map((player,index) => (
-            <li key={index} id={index} value={player.id} onClick={this.handlePlayerClick}>
-              {player.name} -- {player.club_position}
-            </li>))}
-        </ul>
+                <br/>
+                <br/>
+                <br/>
+                Selection 1: {this.state.firstSelection.name ? this.state.firstSelection.name : null}
+                <br/>
+                Selection 2: {this.state.secondSelection.name ? this.state.secondSelection.name : null}
+                <br/>
+                <br/>
+                <Button onClick={this.handleChangePlayers}>Change Lineup</Button><Button onClick={this.clearSelections}>Clear Player Selections</Button>
+                <br/>
+                <br/>
+                <Button onClick={this.handleSaveLineup}>Save Lineup</Button>
+                <br/>
+                <p>Set as Default? <Input type="checkbox" onClick={this.handleSetFormationDefault} value={this.state.setFormationDefault} /></p>
+                <br/>
+              </Grid.Column>
+              <Grid.Column width={4}>
+                Team Formation: <Dropdown value={this.state.formation.format} search selection options={formationOptions} onChange={this.handleFormationChange}/>
+                <br/>
+                Saved Formations: <Dropdown search selection options={savedClubFormations} onChange={this.handleSavedFormationChange}/>
+                <br/>
+                <br/>
+                <FormationChart club={this.state.currentClub} formation={this.state.formation} starters={this.state.starters} />
+              </Grid.Column>
+              <Grid.Column width={4}>
+
+              </Grid.Column>
+            </Grid.Row>
+
+            <Grid.Row>
+
+            </Grid.Row>
+          </Grid>
+          </div>
       </div>
     )
   }
 }
-// {this.state.secondSelection.name ? <PlayerRadarChart player={this.state.secondSelection} /> : null}
 
 export default Club

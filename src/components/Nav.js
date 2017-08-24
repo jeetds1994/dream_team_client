@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button, Image, Grid, Menu, Input, Search } from 'semantic-ui-react'
+import { Image, Grid, Menu, Search } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import _ from 'lodash'
 
@@ -61,35 +61,52 @@ class Nav extends Component {
       const isMatch = (result) => re.test(result.name)
 
       this.setState({
-        results: _.filter(this.props.clubs.club, isMatch),
+        results: _.filter(this.props.clubs, isMatch),
         isLoading: false
       })
     }, 500)
   }
 
+  resultRenderer = (result) => {
+    console.log(result)
+    return (
+      <div >
+        <div className='image'>
+          <img src={result.badge} alt='club-badge' />
+        </div>
+        <div className='content'>
+          <div className='title'>
+            <a href={`/clubs/${result.name}`} target='_blank'>
+            {result.name}
+            </a>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   render() {
     const { isLoading, value, results, activeItem } = this.state
-
-    // <Input icon='search' placeholder='Search...' />
-    // color: #4BA2F4
 
     return (
       <div>
         <Menu pointing secondary>
-          <Menu.Item header style={{ fontSize: '1.1em', padding:'10px 10px 17px 5px'}}>
-              <span style={{color:'#000000'}}>{`{`}</span><Image src='logo.ico' alt='logo' style={{width: '16px', height: '16px'}} /><span style={{color:'#000000'}}>{`DREAM`}</span><span style={{color:'#88f2e8'}}>TEAM</span><span style={{color:'#000000'}}>&nbsp;{`}`}</span>
+          <Menu.Item header style={{padding:'0px 10px 0px 5px', margin:'0px 0px 9px 0px'}}>
+              <span style={{color:'#000000'}}>{`{`}</span><Image src='/logo.png' style={{width: '16px', height: '16px'}} /><span style={{color:'#000000'}}>{`DREAM`}</span><span style={{color:'#88f2e8'}}>TEAM</span><span style={{color:'#000000'}}>&nbsp;{`}`}</span>
           </Menu.Item>
-          <Menu.Item name='home' active={activeItem === 'home'} onClick={this.handleItemClick} style={{ fontSize: '1.1em', padding:'10px 10px 15px 5px'}}><Link to='/'>Home</Link></Menu.Item>
-          <Menu.Item name='clubs' active={activeItem === 'clubs'} onClick={this.handleItemClick} style={{ fontSize: '1.1em', padding:'10px 10px 15px 5px'}}><Link to='/clubs'>Clubs</Link></Menu.Item>
-          <Menu.Item name='players' active={activeItem === 'players'} onClick={this.handleItemClick} style={{ fontSize: '1.1em', padding:'10px 10px 15px 5px'}}><Link to='/players'>Players</Link></Menu.Item>
+          <Link to='/'><Menu.Item name='home' active={activeItem === 'home'} onClick={this.handleItemClick} style={{padding:'14px 10px 10px 4px'}}>Home</Menu.Item></Link>
+          <Link to='/clubs'><Menu.Item name='clubs' active={activeItem === 'clubs'} onClick={this.handleItemClick} style={{padding:'14px 10px 10px 5px'}}>Clubs</Menu.Item></Link>
+          <Link to='/players'><Menu.Item name='players' active={activeItem === 'players'} onClick={this.handleItemClick} style={{padding:'14px 10px 10px 5px'}}>Players</Menu.Item></Link>
           <Menu.Menu position='right'>
             <Grid>
               <Grid.Column width={8}>
-                <Menu.Item style={{ fontSize: '0.9em', padding: '10px 5px'}}>
+                <Menu.Item style={{ fontSize: '0.85em', padding: '5px 15px 3px 0px'}}>
                   <Search
+                    placeholder='Search...'
                     loading={isLoading}
                     onResultSelect={this.handleResultSelect}
                     onSearchChange={this.handleSearchChange}
+                    resultRenderer={this.resultRenderer}
                     results={results}
                     value={value}
                     {...this.props}
@@ -97,9 +114,6 @@ class Nav extends Component {
                 </Menu.Item>
               </Grid.Column>
              </Grid>
-            <Menu.Item name='logout' active={activeItem === 'logout'} onClick={this.handleItemClick} style={{ fontSize: '1em', padding:'5px 10px 16px 0px'}}>
-              <Button>Log Out</Button>
-            </Menu.Item>
           </Menu.Menu>
         </Menu>
       </div>

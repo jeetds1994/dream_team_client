@@ -8,11 +8,11 @@ const FeatureCards = () => (
         <Grid.Column width={16}>
           <Card.Group itemsPerRow={3}>
             <Card href='/clubs'>
-              <Image style={{height: '300px', width: '360px'}} src='/Emirates-Stadium-Corner-Flag-Arsenal-Football-Sportwalk.jpg' />
+              <Image style={{height: '300px', width: '360px'}} src='/1485972550847_lc_galleryImage_MANCHESTER_ENGLAND_FEBRUA.JPG' />
               <Card.Content>
                 <Card.Header>All The Best Teams</Card.Header>
                 <Card.Meta>Blurb</Card.Meta>
-                <Card.Description>Change the formation, cycle in the youngsters, or account for a recent injury</Card.Description>
+                <Card.Description>Change the formation, cycle in the youngsters, or account for a recent injury Change the formation, cycle in the youngsters, or account for a recent injury Change the formation, cycle in the youngsters, or account for a recent injury Change the formation, cycle in the youngsters, or account for a recent injury</Card.Description>
               </Card.Content>
             </Card>
             <Card href='/players'>
@@ -20,7 +20,7 @@ const FeatureCards = () => (
               <Card.Content>
                 <Card.Header>Every Professional Player</Card.Header>
                 <Card.Meta>Blurb</Card.Meta>
-                <Card.Description>Change the formation, cycle in the youngsters, or account for a recent injury</Card.Description>
+                <Card.Description>Change the formation, cycle in the youngsters, or account for a recent injury Change the formation, cycle in the youngsters, or account for a recent injury</Card.Description>
               </Card.Content>
             </Card>
             <Card href='/tutorial'>
@@ -28,7 +28,7 @@ const FeatureCards = () => (
               <Card.Content>
                 <Card.Header>Become The Manager</Card.Header>
                 <Card.Meta>Blurb</Card.Meta>
-                <Card.Description>Change the formation, cycle in the youngsters, or account for a recent injury</Card.Description>
+                <Card.Description>Change the formation, cycle in the youngsters, or account for a recent injury Change the formation, cycle in the youngsters, or account for a recent injury Change the formation, cycle in the youngsters, or account for a recent injury</Card.Description>
               </Card.Content>
             </Card>
           </Card.Group>

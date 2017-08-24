@@ -12,8 +12,8 @@ class ClubList extends Component {
       <div>
         <br/>
         <br/>
-        <Grid container stackable doubling columns={5} divided>
-          <Menu pagination>
+        <div>
+          <Menu pagination style={{margin: '0px 0px 0px 810px'}}>
             <Menu.Item name='1' active={activeItem === '1'} onClick={this.props.handlePageNumClick} />
             <Menu.Item name='2' active={activeItem === '2'} onClick={this.props.handlePageNumClick} />
             <Menu.Item name='3' active={activeItem === '3'} onClick={this.props.handlePageNumClick} />
@@ -22,20 +22,22 @@ class ClubList extends Component {
             <Menu.Item name='6' active={activeItem === '6'} onClick={this.props.handlePageNumClick} />
             <Menu.Item name='7' active={activeItem === '7'} onClick={this.props.handlePageNumClick} />
           </Menu>
-          <Grid.Row>
-            {this.props.clubs[0] && this.props.clubs.map((club,index) => {
-              return (
-                <Grid.Column>
-                  <div key={club.id}>
-                    <Link to={`/clubs/${club.id}`}>
-                    <Image width='50' src={club.badge} avatar />
-                    {club.name}</Link>
-                  </div>
-                </Grid.Column>
-              )
-            })}
-          </Grid.Row>
-        </Grid>
+          <Grid container stackable doubling columns={5} divided style={{margin: '5px 0px 0px 0px'}}>
+            <Grid.Row>
+              {this.props.clubs[0] && this.props.clubs.map((club,index) => {
+                return (
+                  <Grid.Column>
+                    <div key={club.id}>
+                      <Link to={`/clubs/${club.id}`}>
+                      <Image width='50' src={club.badge} avatar />
+                      {club.name}</Link>
+                    </div>
+                  </Grid.Column>
+                )
+              })}
+            </Grid.Row>
+          </Grid>
+        </div>
       </div>
     )
   }

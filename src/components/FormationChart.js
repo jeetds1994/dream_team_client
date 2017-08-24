@@ -79,7 +79,7 @@ class FormationChart extends Component {
     if(nextProps !== this.state) {
       let starterNames = []
       if (nextProps.starters) {
-        starterNames = nextProps.starters.map((starter, index) => starter.name + ' - ' + nextProps.formation[`position_${index+1}`])
+        starterNames = nextProps.starters.map((starter, index) => nextProps.formation[`position_${index+1}`] + ': ' + '#' + starter.club_kit + ' ' + starter.name + ' - ' + starter.rating )
       }
 
       let positionalData = []
@@ -123,7 +123,8 @@ class FormationChart extends Component {
       	        pointBorderWidth: 2,
       	        pointHoverBorderWidth: 3,
                 // backgroundColor: 'rgba(0, 200, 200, 1)'
-                backgroundColor: 'rgba(240, 100, 90, 1)',
+                // backgroundColor: 'rgba(240, 100, 90, 1)',
+                backgroundColor: '#88f2e8',
                 pointHoverBackgroundColor: 'rgba(0, 100, 200, 1)'
               }]
           },
@@ -210,6 +211,10 @@ class FormationChart extends Component {
 
   render() {
     const divStyle = {
+      backgroundSize: 'cover',
+      position: 'static',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
       width: '300px',
       height: '450px',
       backgroundImage: 'url(https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Soccer_Field_Transparant.svg/2000px-Soccer_Field_Transparant.svg.png)'
@@ -250,10 +255,10 @@ class FormationChart extends Component {
                  },
       title:    {
                   display: true,
-                  text: !isEmpty(this.state.club) ? `${this.state.club.name}: ${this.state.formation.format}` : '',
+                  // text: !isEmpty(this.state.club) ? `${this.state.club.name}: ${this.state.formation.format}` : '',
                   fontSize: 24,
                   position: "top",
-                  fontColor: "black"
+                  fontColor: "#000",
                 },
       animation:{
                   duration: 1200,
@@ -300,11 +305,16 @@ class FormationChart extends Component {
     }
 
     return (
-      <div style={divStyle} className="chart">
-        <Scatter
-          data={this.state.chartData}
-          options={chartOptions}
-        />
+      <div>
+        <div>
+          {!isEmpty(this.state.club) ? `${this.state.club.name}: ${this.state.formation.format}` : ''}
+        </div>
+        <div style={divStyle}>
+          <Scatter
+            data={this.state.chartData}
+            options={chartOptions}
+          />
+        </div>
       </div>
     )
   }

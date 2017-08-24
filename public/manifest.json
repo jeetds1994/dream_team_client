@@ -3,8 +3,8 @@
   "name": "Dream Team",
   "icons": [
     {
-      "src": "logo.ico",
-      "sizes": "124x124",
+      "src": "logo.png",
+      "sizes": "192x192",
       "type": "image/png"
     }
   ],

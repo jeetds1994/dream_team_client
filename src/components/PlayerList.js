@@ -14,8 +14,8 @@ class PlayerList extends Component {
         <Route exact path='/players/:id' component={Player} />
         <br/>
         <br/>
-        <Grid container stackable doubling columns={5} divided>
-          <Menu pagination>
+        <div>
+          <Menu pagination style={{margin: '0px 0px 0px 500px'}}>
             <Menu.Item name='1' active={activeItem === '1'} onClick={this.props.handlePageNumClick} />
             <Menu.Item name='2' active={activeItem === '2'} onClick={this.props.handlePageNumClick} />
             <Menu.Item name='3' active={activeItem === '3'} onClick={this.props.handlePageNumClick} />
@@ -35,19 +35,21 @@ class PlayerList extends Component {
             <Menu.Item name='17' active={activeItem === '17'} onClick={this.props.handlePageNumClick} />
             <Menu.Item name='18' active={activeItem === '18'} onClick={this.props.handlePageNumClick} />
           </Menu>
-          <Grid.Row>
-            {this.props.players[0] && this.props.players.map((player,index) => {
-              return (
-                <Grid.Column>
-                  <div key={player.id}>
-                    <Link to={`/players/${player.id}`}>
-                    {player.name}</Link>
-                  </div>
-                </Grid.Column>
-              )
-            })}
-          </Grid.Row>
-        </Grid>
+          <Grid container stackable doubling columns={5} divided style={{margin: '5px 0px 0px 0px'}}>
+            <Grid.Row>
+              {this.props.players[0] && this.props.players.map((player,index) => {
+                return (
+                  <Grid.Column>
+                    <div key={player.id}>
+                      <Link to={`/players/${player.id}`}>
+                      {player.name}</Link>
+                    </div>
+                  </Grid.Column>
+                )
+              })}
+            </Grid.Row>
+          </Grid>
+        </div>
       </div>
     )
   }
