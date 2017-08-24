@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PlayerRadarChart from './PlayerRadarChart'
-import { Dimmer, Loader } from 'semantic-ui-react'
+import { Dimmer, Loader, Grid } from 'semantic-ui-react'
 // import { Image, Button } from 'semantic-ui-react'
 
 const BASE_URL = process.env.REACT_APP_API
@@ -39,8 +39,12 @@ class Player extends Component {
                               this.state.player["penalties"],
                               this.state.player["volleys"]
                             ]
-      return this.average(attackAttributes).toFixed(1)
-    }
+    return attackAttributes
+  }
+
+  getAttackRating = (attackAttributes) => {
+    return this.average(attackAttributes).toFixed(1)
+  }
 
     getDefense = () => {
       let defenseAttributes = [
@@ -126,32 +130,106 @@ class Player extends Component {
     const player_keys = Object.keys(player).splice(2, (Object.keys(player).length - 3))
     const player_values = Object.values(player).splice(2, (Object.values(player).length - 3))
 
+    // Quick function to test if an object is empty
+    function isEmpty(obj) {
+      for(var key in obj) {
+          if(obj.hasOwnProperty(key))
+              return false
+      }
+      return true
+    }
+
     return(
       <div>
-        {this.state.loading ? loader : null}
-        <h4>Player Name: {player.name ? player.name : null}</h4>
+        <div>
+          {this.state.loading ? loader : null}
 
-        Attack Rating: {this.getAttack()}<br/>
-        Defense Rating: {this.getDefense()}<br/>
-        Physical Rating: {this.getPhysical()}<br/>
-        Skill Rating: {this.getSkill()}<br/>
-        Mental Rating: {this.getMental()}<br/>
-        {this.state.player.club_position === 'GK' ? `Goalie Rating: ${this.getGoalie()}` : null}
-        <br/>
-        <br/>
-        <br/>
-        <PlayerRadarChart player={this.state.player} />
-        <br/>
-        <br/>
+          <Grid style={{padding: '20px 0px 0px 20px'}}>
+            <Grid.Row>
+              <Grid.Column width={4}>
+                <div style={{fontSize: '24px'}}>
+                  Player Name: {player.name ? player.name : null}
+                  <br/>
+                  <br/>
+                </div>
+                <div style={{fontSize: '16px'}}>
+                  <h4>Overall Rating: {player.rating}</h4>
+                  <br/>
+                </div>
 
+                {player.name ? player_keys.slice(0,11).map((k,index) => <li key={index}>{`${k.split('_').map(word => word[0].toUpperCase() + word.substr(1)).join(' ')} -- ${player_values[index]}`}</li>) : null}
 
-        <p>Player Stats:</p>
-        <ul>
-        {player.name ? player_keys.map((k,index) => <li key={index}>{`${k.split('_').map(word => word[0].toUpperCase() + word.substr(1)).join(' ')} -- ${player_values[index]}`}</li>) : null}
-        </ul>
+              </Grid.Column>
+              <Grid.Column width={8} style={{padding: '15px 15px 15px 15px'}}>
+                <PlayerRadarChart player={this.state.player} />
+              </Grid.Column>
+            </Grid.Row>
+
+            <Grid.Row style={{padding: '20px 0px 0px 0px'}}>
+              {player.club_position === 'GK' ? (<Grid.Column width={2}>
+                Keeper Rating: {this.getGoalie()}<br/>
+                <br/>
+                {player.name ? <li>Crossing: {this.state.player["gk_positioning"]}</li> : null}
+                {player.name ? <li>Short Pass: {this.state.player["gk_diving"]}</li> : null}
+                {player.name ? <li>Long Pass: {this.state.player["gk_kicking"]}</li> : null}
+                {player.name ? <li>Shot Power: {this.state.player["gk_handling"]}</li> : null}
+                {player.name ? <li>Finishing: {this.state.player["gk_reflexes"]}</li> : null}
+              </Grid.Column>) : null}
+              <Grid.Column width={2}>
+                Attack Rating: {this.getAttackRating(this.getAttack())}<br/>
+                <br/>
+                {player.name ? <li>Crossing: {this.state.player["crossing"]}</li> : null}
+                {player.name ? <li>Short Pass: {this.state.player["short_pass"]}</li> : null}
+                {player.name ? <li>Long Pass: {this.state.player["long_pass"]}</li> : null}
+                {player.name ? <li>Shot Power: {this.state.player["shot_power"]}</li> : null}
+                {player.name ? <li>Finishing: {this.state.player["finishing"]}</li> : null}
+                {player.name ? <li>Long Shots: {this.state.player["long_shots"]}</li> : null}
+                {player.name ? <li>Curve: {this.state.player["curve"]}</li> : null}
+                {player.name ? <li>Freekick Accuracy: {this.state.player["freekick_accuracy"]}</li> : null}
+                {player.name ? <li>Penalties: {this.state.player["penalties"]}</li> : null}
+                {player.name ? <li>Volleys: {this.state.player["volleys"]}</li> : null}
+              </Grid.Column>
+              <Grid.Column width={2}>
+                Defense Rating: {this.getDefense()}<br/>
+                <br/>
+                {player.name ? <li>Crossing: {this.state.player["marking"]}</li> : null}
+                {player.name ? <li>Short Pass: {this.state.player["sliding_tackle"]}</li> : null}
+                {player.name ? <li>Long Pass: {this.state.player["standing_tackle"]}</li> : null}
+                {player.name ? <li>Shot Power: {this.state.player["interceptions"]}</li> : null}
+              </Grid.Column>
+              <Grid.Column width={2}>
+                Physical Rating: {this.getPhysical()}<br/>
+                <br/>
+                {player.name ? <li>Crossing: {this.state.player["reactions"]}</li> : null}
+                {player.name ? <li>Short Pass: {this.state.player["acceleration"]}</li> : null}
+                {player.name ? <li>Long Pass: {this.state.player["speed"]}</li> : null}
+                {player.name ? <li>Shot Power: {this.state.player["stamina"]}</li> : null}
+                {player.name ? <li>Finishing: {this.state.player["strength"]}</li> : null}
+                {player.name ? <li>Long Shots: {this.state.player["balance"]}</li> : null}
+                {player.name ? <li>Curve: {this.state.player["agility"]}</li> : null}
+                {player.name ? <li>Freekick Accuracy: {this.state.player["jumping"]}</li> : null}
+                {player.name ? <li>Penalties: {this.state.player["heading"]}</li> : null}
+              </Grid.Column>
+              <Grid.Column width={2}>
+                Skill Rating: {this.getSkill()}<br/>
+                <br/>
+                {player.name ? <li>Crossing: {this.state.player["ball_control"]}</li> : null}
+                {player.name ? <li>Short Pass: {this.state.player["dribbling"]}</li> : null}
+              </Grid.Column>
+              <Grid.Column width={2}>
+                Mental Rating: {this.getMental()}<br/>
+                <br/>
+                {player.name ? <li>Crossing: {this.state.player["aggression"]}</li> : null}
+                {player.name ? <li>Short Pass: {this.state.player["vision"]}</li> : null}
+                {player.name ? <li>Long Pass: {this.state.player["composure"]}</li> : null}
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
+        </div>
       </div>
     )
   }
 }
+// {this.state.player.club_position === 'GK' ? `Goalie Rating: ${this.getGoalie()}` : null}
 
 export default Player
